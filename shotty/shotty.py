@@ -2,6 +2,9 @@
 
 import boto3
 import click
+import botocore
+
+
 
 session = boto3.Session(profile_name='shotty')
 ec2= session.resource('ec2')
@@ -130,7 +133,11 @@ def Stop_instances(project):
         instances = ec2.instances.all()
     for i in instances:
         print('Stopping {}...'.format(i.id))
-        i.stop()
+        try:
+            i.stop()
+        except botocore.exceptions.ClientError as e:
+            print("Could not Stop {}.  ".format(i.id)  + str(e) )
+            continue
 
 
 @instances.command('start')
@@ -146,7 +153,11 @@ def Start_instances(project):
         instances = ec2.instances.all()
     for i in instances:
         print('Starting {}...'.format(i.id))
-        i.start()
+        try:
+            i.start()
+        except botocore.exceptions.ClientError as e:
+            print("Could not Start {}.   ".format(i.id)  + str(e) )
+            continue
 
 
 if __name__ == '__main__':
