@@ -36,11 +36,11 @@ def instances():
     """Commands for instances"""
 
 
-
 @snapshots.command('list')
 @click.option('--project', default=None)
+@click.option('--all', 'list_all', default=False, is_flag=True)
 
-def list_snapshots(project):
+def list_snapshots(project  ,list_all):
     "List snapshots volumes"
     instances=filter_instances(project)
     for i in instances:
@@ -54,6 +54,8 @@ def list_snapshots(project):
                 s.progress,
                 s.start_time.strftime("%c")
                 )))
+                if s.state== 'completed' and not list_all: break
+
     return
 
 @volumes.command('list')
